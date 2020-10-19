@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WirelessMS</string>
+    <string name="automatic_speech_recognition">Automatic Speech Recognition</string>
+    <string name="text_to_speech">Text to Speech</string>
+    <string name="translation">Translation</string>
+    <string name="language_detection">Language Detection</string>
+    <string name="audio_file_transcription">Audio File Transcription</string>
+    <string name="enter_your_text">Enter your Text</string>
+    <string name="_1_37">1:37</string>
+    <string name="_4_12">4:12</string>
+</resources>
