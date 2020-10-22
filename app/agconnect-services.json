@@ -1,0 +1,30 @@
+{
+	"agcgw":{
+		"backurl":"connect-dre.dbankcloud.cn",
+		"url":"connect-dre.hispace.hicloud.com"
+	},
+	"client":{
+		"cp_id":"5190090000025724754",
+		"product_id":"736430079244609995",
+		"client_id":"435999680795509952",
+		"client_secret":"69164152CF736DDD28EBD885A2CC58619C24CBE0F5579C6487D5BFAB07B773FD",
+		"app_id":"102779107",
+		"package_name":"com.msapp.wirelessms",
+		"api_key":"CgB6e3x9gkYNv19X0AeMU1gKH0iy/hf3w+MSb6ogkZO0LXvKgrCLZQcToSOP3gUrr8PtGJtWWbGGSRZIq6IIUXKc"
+	},
+	"service":{
+		"analytics":{
+			"collector_url":"datacollector-dre.dt.hicloud.com,datacollector-dre.dt.dbankcloud.cn",
+			"resource_id":"p1",
+			"channel_id":""
+		},
+		"cloudstorage":{
+			"storage_url":"https://ops-dre.agcstorage.link"
+		},
+		"ml":{
+			"mlservice_url":"ml-api-dre.ai.dbankcloud.com,ml-api-dre.ai.dbankcloud.cn"
+		}
+	},
+	"region":"DE",
+	"configuration_version":"1.0"
+}

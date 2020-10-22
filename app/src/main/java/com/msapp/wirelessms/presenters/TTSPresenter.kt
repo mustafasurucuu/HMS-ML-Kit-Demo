@@ -15,6 +15,7 @@ import com.msapp.wirelessms.ui.TTS
 import java.text.BreakIterator
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.log
 
 class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
 
@@ -23,6 +24,9 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
     private val sentences = ArrayList<String>()
     val tag = "Kant"
     private var i = 0
+    private var k = 0
+    private var j = 0
+    val mapping:HashMap<String,String> = HashMap<String,String>()
 
     private var callback: MLTtsCallback?= object : MLTtsCallback {
         override fun onError(taskId: String, err: MLTtsError) {
@@ -34,7 +38,11 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
         }
 
         override fun onRangeStart(taskId: String, start: Int, end: Int) {
-            Log.d("range", "onAudioAvailable: $taskId,$start,$end")
+            mapping[taskId] = sentences[k]
+            mapping[taskId]?.let {
+                view.listen(it) }
+            k++
+            Log.d("range", "onRangeStart: " + taskId + "," + start + "," + end + mapping[taskId])
         }
 
         override fun onAudioAvailable(taskId: String, audioFragment: MLTtsAudioFragment, offset: Int, range: Pair<Int, Int>,
@@ -68,6 +76,7 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
 
                 }
                 MLTtsConstants.EVENT_SYNTHESIS_START -> {
+
                 }
                 MLTtsConstants.EVENT_SYNTHESIS_END -> {
                 }
@@ -93,6 +102,8 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
     }
 
     override fun giveText(txt: String) {
+        k = 0
+        mapping.clear()
         sentences.clear()
         val iterator = BreakIterator.getSentenceInstance(Locale.US)
         iterator.setText(txt)
@@ -103,6 +114,14 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
                 start = end
                 end = iterator.next()
             }
+        Log.d("tag", "giveText: " + sentences.toString())
+			 while (j < sentences.size) {
+            if (sentences[j] == "\n") {
+                sentences.remove(sentences[j])
+            }
+                 j++
+        }
+        Log.d("tag", "giveText: " + sentences.toString())
         detectLanguage()
     }
 

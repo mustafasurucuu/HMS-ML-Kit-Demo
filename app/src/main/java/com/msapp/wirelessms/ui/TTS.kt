@@ -3,8 +3,12 @@ package com.msapp.wirelessms.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -164,6 +168,23 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
 
     override fun sourceText(): String {
         return myText.text.toString()
+    }
+	
+	 override fun listen(str: String) {
+        runOnUiThread(Runnable {
+            val newStr = str.trim { it <= ' ' }.replace("\n".toRegex(), "")
+            val spannableString = SpannableString(myText.text)
+            val backgroundSpans = spannableString.getSpans(0, spannableString.length, BackgroundColorSpan::class.java)
+            for (span: BackgroundColorSpan? in backgroundSpans) {
+                spannableString.removeSpan(span)
+            }
+            var index = spannableString.toString().indexOf(newStr)
+            if (index >= 0) {
+                spannableString.setSpan(BackgroundColorSpan(Color.YELLOW), index, index + newStr.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                index = spannableString.toString().indexOf(newStr, index + newStr.length)
+            }
+            myText.setText(spannableString)
+        })
     }
 
 

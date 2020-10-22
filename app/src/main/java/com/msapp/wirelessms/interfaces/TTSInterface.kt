@@ -15,5 +15,6 @@ interface TTSInterface {
         fun useEngine(mlTtsEngine: MLTtsEngine?)
         fun ttsButton(): ImageButton?
         fun sourceText(): String?
+        fun listen(str: String)
     }
 }

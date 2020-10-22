@@ -24,7 +24,7 @@
         <activity android:name=".ui.Translation" />
         <activity android:name=".ui.LanguageDetection" />
         <activity android:name=".ui.AFT" />
-        <activity android:name=".ui.TTSkt"
+        <activity android:name=".ui.TTS"
             android:theme="@style/FullScreen"/>
         <activity android:name=".ui.ASR" />
         <activity android:name=".ui.MainActivity" />

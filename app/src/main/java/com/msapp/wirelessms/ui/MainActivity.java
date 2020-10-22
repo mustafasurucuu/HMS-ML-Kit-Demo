@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.tts:
-                intent = new Intent(MainActivity.this, TTSkt.class);
+                intent = new Intent(MainActivity.this, TTS.class);
                 startActivity(intent);
                 break;
             case R.id.translate:
