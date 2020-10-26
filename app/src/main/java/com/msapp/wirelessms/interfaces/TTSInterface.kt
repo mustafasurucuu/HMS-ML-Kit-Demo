@@ -9,6 +9,7 @@ interface TTSInterface {
         fun detectLanguage()
         fun init()
         fun giveText(txt: String)
+        fun setConfigs(lng: String, gender: String)
     }
 
     interface TView {
@@ -16,5 +17,8 @@ interface TTSInterface {
         fun ttsButton(): ImageButton?
         fun sourceText(): String?
         fun listen(str: String)
+        fun selectSpeaker(lng: String)
+        fun setVolume(): Float
+        fun setSpeed(): Float
     }
 }

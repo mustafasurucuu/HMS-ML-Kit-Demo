@@ -6,6 +6,7 @@ class Timbres {
 
         const val TTS_EN_US = "en-US"
         const val TTS_SPEAKER_MALE_EN = "en-US-st-2"
+        const val TTS_SPEAKER_FEMALE_EN = "en-US-st-1"
         const val TTS_DE = "de-DE"
         const val TTS_SPEAKER_FEMALE_DE = "de-DE-st-1"
         const val TTS_ES = "es-ES"
@@ -16,6 +17,7 @@ class Timbres {
         const val TTS_SPEAKER_FEMALE_FR = "fr-FR-st-1"
         const val TTS_ZH = "zh-Hans"
         const val TTS_SPEAKER_FEMALE_ZH = "zh-Hans-st-1"
+        const val TTS_SPEAKER_MALE_ZH = "zh-Hans-st-2"
     }
 
 }

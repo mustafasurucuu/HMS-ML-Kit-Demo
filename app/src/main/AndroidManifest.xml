@@ -25,7 +25,8 @@
         <activity android:name=".ui.LanguageDetection" />
         <activity android:name=".ui.AFT" />
         <activity android:name=".ui.TTS"
-            android:theme="@style/FullScreen"/>
+            android:theme="@style/FullScreen"
+            android:label="@string/text_to_speech"/>
         <activity android:name=".ui.ASR" />
         <activity android:name=".ui.MainActivity" />
     </application>

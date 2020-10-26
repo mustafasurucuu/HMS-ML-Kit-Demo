@@ -1,6 +1,7 @@
 package com.msapp.wirelessms.ui
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -13,8 +14,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
+import android.view.Window
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -43,9 +44,10 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
     private lateinit var next: ImageButton
     private lateinit var prev: ImageButton
     private var engine: MLTtsEngine? = null
-    private lateinit var clearText: ImageButton
-    private var myFileIntent: Intent?= null
+    private var myFileIntent: Intent? = null
     private var extractor: XWPFWordExtractor? = null
+    private lateinit var seekBarVolume: SeekBar
+    private lateinit var seekBarSpeed: SeekBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +59,11 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
         //prev = findViewById(R.id.buttonPrevious)
         ttsBtn = findViewById(R.id.buttonPlay)
         //repeat = findViewById(R.id.buttonRepeat)
-        clearText = findViewById(R.id.clear_text)
         myText = findViewById(R.id.tts_text)
         myText.setTextIsSelectable(true)
         ttsBtn.setOnClickListener(this as View.OnClickListener)
-        clearText.setOnClickListener(this as View.OnClickListener)
+        seekBarVolume = findViewById(R.id.seek_bar_volume)
+        seekBarSpeed = findViewById(R.id.seek_bar_speed)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE), PackageManager.PERMISSION_GRANTED)
     }
@@ -165,12 +167,11 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
         return ttsBtn
     }
 
-
     override fun sourceText(): String {
         return myText.text.toString()
     }
-	
-	 override fun listen(str: String) {
+
+    override fun listen(str: String) {
         runOnUiThread(Runnable {
             val newStr = str.trim { it <= ' ' }.replace("\n".toRegex(), "")
             val spannableString = SpannableString(myText.text)
@@ -187,15 +188,61 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
         })
     }
 
-
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.clear_text -> {
-                myText.setText("")
-                clearText.visibility = View.INVISIBLE
-            }
             R.id.buttonPlay -> presenter.giveText(myText.text.toString())
         }
     }
 
+    override fun selectSpeaker(lng: String) {
+        when (lng) {
+            "en" -> showDialog("Your document is English. Please select a speaker.", lng)
+            "zh" -> showDialog("Your document is Chinese. Please select a speaker.", lng)
+            "de" -> presenter.setConfigs(lng, "female")
+            "es" -> presenter.setConfigs(lng, "female")
+            "it" -> presenter.setConfigs(lng, "female")
+            "fr" -> presenter.setConfigs(lng, "female")
+        }
+    }
+
+    override fun setVolume(): Float {
+        var volume: Float = seekBarVolume.progress / 50.0f
+        if (volume < 0.1) volume = 0.1f
+        return volume
+    }
+
+    override fun setSpeed(): Float {
+        var speed: Float = seekBarSpeed.progress / 50.0f
+        if (speed < 0.1) speed = 0.1f
+        return speed
+    }
+
+
+    private fun showDialog(title: String, lng: String) {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_dialog)
+        val body = dialog.findViewById(R.id.tvBody) as TextView
+        body.text = title
+        val maleBtn = dialog.findViewById(R.id.btn_male) as Button
+        val femaleBtn = dialog.findViewById(R.id.btn_female) as TextView
+        maleBtn.setOnClickListener {
+            dialog.dismiss()
+            if (lng == "en") {
+                presenter.setConfigs(lng, "male")
+            } else if (lng == "zh") {
+                presenter.setConfigs(lng, "male")
+            }
+        }
+        femaleBtn.setOnClickListener {
+            dialog.dismiss()
+            if (lng == "en") {
+                presenter.setConfigs(lng, "female")
+            } else if (lng == "zh") {
+                presenter.setConfigs(lng, "female")
+            }
+        }
+        dialog.show()
+    }
 }

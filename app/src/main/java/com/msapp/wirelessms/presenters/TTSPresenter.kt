@@ -15,7 +15,6 @@ import com.msapp.wirelessms.ui.TTS
 import java.text.BreakIterator
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.log
 
 class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
 
@@ -135,22 +134,40 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
         firstBestDetectTask.addOnSuccessListener { language ->
             Log.d("LanguageDetected", "onSuccess: $language")
             mlConfigs = MLTtsConfig()
-                    .setSpeed(1.0f)
-                    .setVolume(1.0f)
+                    .setSpeed(view.setSpeed())
+                    .setVolume(view.setVolume())
             when (language) {
-                "en" -> mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_MALE_EN
-                "de" -> mlConfigs.setLanguage(Timbres.TTS_DE).person = Timbres.TTS_SPEAKER_FEMALE_DE
-                "es" -> mlConfigs.setLanguage(Timbres.TTS_ES).person = Timbres.TTS_SPEAKER_FEMALE_ES
-                "it" -> mlConfigs.setLanguage(Timbres.TTS_IT).person = Timbres.TTS_SPEAKER_FEMALE_IT
-                "fr" -> mlConfigs.setLanguage(Timbres.TTS_FR).person = Timbres.TTS_SPEAKER_FEMALE_FR
-                "zh" -> mlConfigs.setLanguage(Timbres.TTS_ZH).person = Timbres.TTS_SPEAKER_FEMALE_ZH
-                else -> {
-                    mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_MALE_EN
-                }
+                "en" -> view.selectSpeaker(language)
+                "zh" -> view.selectSpeaker(language)
+                "de" -> view.selectSpeaker(language)
+                "es" -> view.selectSpeaker(language)
+                "it" -> view.selectSpeaker(language)
+                "fr" -> view.selectSpeaker(language)
             }
-            init()
+
         }.addOnFailureListener { e -> Log.d("LanguageFail", "onFailure: $e") }
     }
 
-
+    override fun setConfigs(lng: String, gender: String ) {
+        if (lng == "en") {
+            if(gender == "male"){
+            mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_MALE_EN
+            } else if (gender == "female") {
+                mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_FEMALE_EN
+            }
+        } else if (lng == "zh"){
+            if(gender == "male"){
+                mlConfigs.setLanguage(Timbres.TTS_ZH).person = Timbres.TTS_SPEAKER_MALE_ZH
+            } else if (gender == "female") {
+                mlConfigs.setLanguage(Timbres.TTS_ZH).person = Timbres.TTS_SPEAKER_FEMALE_ZH
+            }
+        }
+        when (lng) {
+            "de" -> mlConfigs.setLanguage(Timbres.TTS_DE).person = Timbres.TTS_SPEAKER_FEMALE_DE
+            "es" -> mlConfigs.setLanguage(Timbres.TTS_ES).person = Timbres.TTS_SPEAKER_FEMALE_ES
+            "it" -> mlConfigs.setLanguage(Timbres.TTS_IT).person = Timbres.TTS_SPEAKER_FEMALE_IT
+            "fr" -> mlConfigs.setLanguage(Timbres.TTS_FR).person = Timbres.TTS_SPEAKER_FEMALE_FR
+        }
+        init()
+    }
 }
