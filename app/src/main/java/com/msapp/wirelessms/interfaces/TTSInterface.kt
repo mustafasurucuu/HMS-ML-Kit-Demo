@@ -10,6 +10,7 @@ interface TTSInterface {
         fun init()
         fun giveText(txt: String)
         fun setConfigs(lng: String, gender: String)
+        //fun giveCurrentLng(): String?
     }
 
     interface TView {

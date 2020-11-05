@@ -2,28 +2,29 @@ package com.msapp.wirelessms.ui
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.huawei.hms.mlsdk.tts.MLTtsEngine
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import com.msapp.wirelessms.R
 import com.msapp.wirelessms.Utils.Constants
+import com.msapp.wirelessms.Utils.Timbres
 import com.msapp.wirelessms.interfaces.TTSInterface
 import com.msapp.wirelessms.presenters.TTSPresenter
 import org.apache.poi.hwpf.HWPFDocument
@@ -39,55 +40,63 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
 
     private lateinit var presenter: TTSInterface.TPresenter
     private lateinit var myText: EditText
-    private lateinit var repeat: ImageButton
     private lateinit var ttsBtn: ImageButton
-    private lateinit var next: ImageButton
-    private lateinit var prev: ImageButton
     private var engine: MLTtsEngine? = null
     private var myFileIntent: Intent? = null
     private var extractor: XWPFWordExtractor? = null
     private lateinit var seekBarVolume: SeekBar
     private lateinit var seekBarSpeed: SeekBar
+    private lateinit var pickerLayout: LinearLayout
+    private lateinit var settingsLayout: LinearLayout
+    private lateinit var settingsBtn: RadioButton
+    private lateinit var pickerBtn: RadioButton
+    private lateinit var chooseFile: Button
+    private lateinit var maleButton: ImageButton
+    private lateinit var femaleButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_t_t_s)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
         presenter = TTSPresenter(this)
-        //next = findViewById(R.id.buttonNext)
-        //prev = findViewById(R.id.buttonPrevious)
         ttsBtn = findViewById(R.id.buttonPlay)
-        //repeat = findViewById(R.id.buttonRepeat)
+        settingsBtn = findViewById(R.id.settings_button)
+        pickerBtn = findViewById(R.id.pick_file_button)
+        chooseFile = findViewById(R.id.btn_choose_file)
+        maleButton = findViewById(R.id.buttonMale)
+        femaleButton = findViewById(R.id.buttonFemale)
         myText = findViewById(R.id.tts_text)
         myText.setTextIsSelectable(true)
         ttsBtn.setOnClickListener(this as View.OnClickListener)
+        chooseFile.setOnClickListener(this as View.OnClickListener)
         seekBarVolume = findViewById(R.id.seek_bar_volume)
         seekBarSpeed = findViewById(R.id.seek_bar_speed)
+        pickerLayout = findViewById(R.id.picker_button_layout)
+        settingsLayout = findViewById(R.id.settings_layout)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE), PackageManager.PERMISSION_GRANTED)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.myDocs -> {
-                if (engine != null) {
-                    engine!!.stop()
-                    engine!!.shutdown()
-                    openFile()
-                } else {
-                    openFile()
-                }
-                true
+        pickerBtn.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked) {
+                buttonView.setBackgroundResource(R.drawable.transcription_type_radio_button)
+                settingsLayout.setBackgroundResource(0)
+                pickerLayout.visibility = View.VISIBLE
+                settingsLayout.visibility = View.GONE
             }
-            else -> super.onOptionsItemSelected(item)
         }
+
+        settingsBtn.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked) {
+                buttonView.setBackgroundResource(R.drawable.transcription_type_radio_button)
+                pickerLayout.setBackgroundResource(0)
+                settingsLayout.visibility = View.VISIBLE
+                pickerLayout.visibility = View.GONE
+            }
+
+        }
+
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -181,27 +190,44 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
             }
             var index = spannableString.toString().indexOf(newStr)
             if (index >= 0) {
-                spannableString.setSpan(BackgroundColorSpan(Color.YELLOW), index, index + newStr.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannableString.setSpan(BackgroundColorSpan(Color.BLACK), index, index + newStr.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 index = spannableString.toString().indexOf(newStr, index + newStr.length)
             }
             myText.setText(spannableString)
         })
     }
 
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.buttonPlay -> presenter.giveText(myText.text.toString())
-        }
-    }
-
     override fun selectSpeaker(lng: String) {
         when (lng) {
-            "en" -> showDialog("Your document is English. Please select a speaker.", lng)
-            "zh" -> showDialog("Your document is Chinese. Please select a speaker.", lng)
-            "de" -> presenter.setConfigs(lng, "female")
-            "es" -> presenter.setConfigs(lng, "female")
-            "it" -> presenter.setConfigs(lng, "female")
-            "fr" -> presenter.setConfigs(lng, "female")
+            "en" -> {
+                showDialog("Your document is English. Please select a speaker.", lng)
+                       //presenter.setConfigs(lng, "female")
+                       //maleButton.visibility = View.VISIBLE
+                       //femaleButton.visibility = View.VISIBLE
+            }
+                //showDialog("Your document is English. Please select a speaker.", lng)
+            "zh" -> {showDialog("Your document is Chinese. Please select a speaker.", lng)
+                        //presenter.setConfigs(lng, "female")
+                        //maleButton.visibility = View.VISIBLE
+                        //femaleButton.visibility = View.VISIBLE
+            }
+                //showDialog("Your document is Chinese. Please select a speaker.", lng)
+            "de" -> {presenter.setConfigs(lng, "female")
+                    //maleButton.visibility = View.GONE
+                    //femaleButton.visibility = View.VISIBLE
+            }
+            "es" -> {presenter.setConfigs(lng, "female")
+                    //maleButton.visibility = View.GONE
+                    //femaleButton.visibility = View.VISIBLE
+            }
+            "it" -> {presenter.setConfigs(lng, "female")
+                    //maleButton.visibility = View.GONE
+                    //femaleButton.visibility = View.VISIBLE
+            }
+            "fr" -> {presenter.setConfigs(lng, "female")
+                    //maleButton.visibility = View.GONE
+                    //femaleButton.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -225,24 +251,40 @@ class TTS : AppCompatActivity(), TTSInterface.TView, View.OnClickListener {
         dialog.setContentView(R.layout.custom_dialog)
         val body = dialog.findViewById(R.id.tvBody) as TextView
         body.text = title
-        val maleBtn = dialog.findViewById(R.id.btn_male) as Button
-        val femaleBtn = dialog.findViewById(R.id.btn_female) as TextView
+        val maleBtn = dialog.findViewById(R.id.btn_male) as FloatingActionButton
+        val femaleBtn = dialog.findViewById(R.id.btn_female) as FloatingActionButton
         maleBtn.setOnClickListener {
-            dialog.dismiss()
             if (lng == "en") {
                 presenter.setConfigs(lng, "male")
             } else if (lng == "zh") {
                 presenter.setConfigs(lng, "male")
             }
+            dialog.dismiss()
         }
         femaleBtn.setOnClickListener {
-            dialog.dismiss()
             if (lng == "en") {
                 presenter.setConfigs(lng, "female")
             } else if (lng == "zh") {
                 presenter.setConfigs(lng, "female")
             }
+            dialog.dismiss()
         }
         dialog.show()
     }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.buttonPlay -> presenter.giveText(myText.text.toString())
+            R.id.btn_choose_file -> {
+                if (engine != null) {
+                    engine!!.stop()
+                    //engine!!.shutdown()
+                    openFile()
+                } else {
+                    openFile()
+                }
+            }
+        }
+    }
+
 }

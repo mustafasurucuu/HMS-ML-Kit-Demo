@@ -5,8 +5,17 @@
     <string name="translation">Translation</string>
     <string name="language_detection">Language Detection</string>
     <string name="audio_file_transcription">Audio File Transcription</string>
-    <string name="enter_your_text">Enter your Text</string>
+    <string name="enter_your_text">Enter Your Text or Pick a File</string>
     <string name="_1_37">1:37</string>
     <string name="_4_12">4:12</string>
     <string name="speaker_selection">Speaker Selection</string>
+
+    <string-array name="tts_languages">
+        <item>English</item>
+        <item>Chinese</item>
+        <item>German</item>
+        <item>French</item>
+        <item>Spanish</item>
+        <item>Italian</item>
+    </string-array>
 </resources>

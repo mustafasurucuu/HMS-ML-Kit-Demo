@@ -3,6 +3,7 @@ package com.msapp.wirelessms.presenters
 import android.os.Bundle
 import android.util.Log
 import android.util.Pair
+import android.widget.ImageButton
 import com.huawei.hms.mlsdk.common.MLApplication
 import com.huawei.hms.mlsdk.langdetect.MLLangDetectorFactory
 import com.huawei.hms.mlsdk.langdetect.local.MLLocalLangDetectorSetting
@@ -25,6 +26,10 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
     private var i = 0
     private var k = 0
     private var j = 0
+    private lateinit var maleButton: ImageButton
+    private lateinit var femaleButton: ImageButton
+    private var currentLanguage = ""
+    //private lateinit var currentLanguage: String
     val mapping:HashMap<String,String> = HashMap<String,String>()
 
     private var callback: MLTtsCallback?= object : MLTtsCallback {
@@ -51,28 +56,34 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
         override fun onEvent(taskId: String, eventId: Int, bundle: Bundle?) {
             when (eventId) {
                 MLTtsConstants.EVENT_PLAY_START -> {
-                    view.ttsButton().setOnClickListener {
-                        mlTtsEngine.pause()
-                        view.ttsButton().setImageResource(R.drawable.ic_pause)}
+                    view.runOnUiThread(Runnable {
+                        view.ttsButton().setOnClickListener {
+                            mlTtsEngine.pause()
+                            view.ttsButton().setImageResource(R.drawable.ic_pause)}
+                    })
 
                 }
                 MLTtsConstants.EVENT_PLAY_STOP -> {
-                    view.ttsButton().setImageResource(R.drawable.ic_play)
-                    view.ttsButton().setOnClickListener {
-                       giveText(view.sourceText())
-                         }
+                    view.runOnUiThread(Runnable {
+                        view.ttsButton().setImageResource(R.drawable.ic_play)
+                        view.ttsButton().setOnClickListener {
+                            giveText(view.sourceText())
+                        }
+                    })
                 }
                 MLTtsConstants.EVENT_PLAY_RESUME -> {
-                    view.ttsButton().setOnClickListener {
-                        mlTtsEngine.pause()
-                        view.ttsButton().setImageResource(R.drawable.ic_pause)}
-
+                    view.runOnUiThread(Runnable {
+                        view.ttsButton().setOnClickListener {
+                            mlTtsEngine.pause()
+                            view.ttsButton().setImageResource(R.drawable.ic_pause)}
+                    })
                 }
                 MLTtsConstants.EVENT_PLAY_PAUSE -> {
-                    view.ttsButton().setOnClickListener {
-                        mlTtsEngine.resume()
-                        view.ttsButton().setImageResource(R.drawable.ic_play)}
-
+                    view.runOnUiThread(Runnable {
+                        view.ttsButton().setOnClickListener {
+                            mlTtsEngine.resume()
+                            view.ttsButton().setImageResource(R.drawable.ic_play)}
+                    })
                 }
                 MLTtsConstants.EVENT_SYNTHESIS_START -> {
 
@@ -143,6 +154,10 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
                 "es" -> view.selectSpeaker(language)
                 "it" -> view.selectSpeaker(language)
                 "fr" -> view.selectSpeaker(language)
+                else -> {
+                    mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_MALE_EN
+                    init()
+                }
             }
 
         }.addOnFailureListener { e -> Log.d("LanguageFail", "onFailure: $e") }
@@ -150,12 +165,14 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
 
     override fun setConfigs(lng: String, gender: String ) {
         if (lng == "en") {
+            currentLanguage = "en"
             if(gender == "male"){
             mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_MALE_EN
             } else if (gender == "female") {
                 mlConfigs.setLanguage(Timbres.TTS_EN_US).person = Timbres.TTS_SPEAKER_FEMALE_EN
             }
         } else if (lng == "zh"){
+            currentLanguage = "zh"
             if(gender == "male"){
                 mlConfigs.setLanguage(Timbres.TTS_ZH).person = Timbres.TTS_SPEAKER_MALE_ZH
             } else if (gender == "female") {
@@ -170,4 +187,9 @@ class TTSPresenter (var view: TTS) : TTSInterface.TPresenter {
         }
         init()
     }
+
+/*    override fun giveCurrentLng(): String? {
+        return currentLanguage
+    }*/
+
 }

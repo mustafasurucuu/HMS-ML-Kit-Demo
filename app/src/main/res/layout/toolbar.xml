@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#8C210B"
-    android:elevation="4dp"
+    android:background="@color/selectedGrey"
+    android:elevation="2dp"
     app:titleTextAppearance="@style/Toolbar.TitleText"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 </androidx.appcompat.widget.Toolbar>

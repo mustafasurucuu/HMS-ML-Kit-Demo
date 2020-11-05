@@ -9,4 +9,13 @@
     <color name="colorBackground">#F3F3F3</color>
     <color name="colorStroke">#BDBDBD</color>
     <color name="colorHint">#ECECEC</color>
+    <color name="colorfirst">#b0003a</color>
+    <color name="colorsecond">#28D6C0</color>
+    <color name="colorthird">#F9E22C</color>
+    <color name="colorfourth">#8A8989</color>
+    <color name="grey">#555555</color>
+    <color name="midGrey">#88FFFFFF</color>
+    <color name="selectedGrey">#44FFFFFF</color>
+    <color name="midBlack">#33000000</color>
+
 </resources>
